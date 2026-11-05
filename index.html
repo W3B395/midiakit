@@ -352,13 +352,73 @@ body.apresentando .barra-apres { display: flex; position: fixed; left: 50%; bott
   .capa .conteudo .acoes { margin-left: 0; }
   .cta { padding: 26px; }
 }
-@media (max-width: 520px) {
-  .kpis { gap: 10px; }
-  .kpi { padding: 16px; min-height: 0; }
-  .kpi .valor { font-size: 26px; margin-top: 10px; }
-  .kpi .spark { display: none; }
-  .hbar { grid-template-columns: 96px 1fr 48px; }
+/* ---------- celular: menos ruído, mais compacto, carrosséis no lugar de listas longas ---------- */
+@media (max-width: 600px) {
+  body { font-size: 14.5px; }
+  .pagina { padding: 12px 12px 36px; }
+  section, footer { margin-top: 30px; }
+  .cab { margin-bottom: 12px; }
+  .cab h2 { font-size: 20px; }
+  .cab p { font-size: 13px; }
+  .cartao { padding: 16px; border-radius: 14px; }
+  .info, details.tabela, .kpi .spark, .kpi .chip-ic, .metrica .chip-ic, .metrica .nota, .var span { display: none !important; }
+
+  /* capa */
+  .capa .faixa { height: 104px; }
+  .capa .faixa .selo-kit { left: 14px; right: 14px; top: 14px; align-items: flex-start; }
+  .capa .conteudo { gap: 12px; padding: 0 16px 16px; }
+  .capa .conteudo .foto { width: 84px; height: 84px; margin-top: -46px; }
+  .ident { min-width: 0; flex-basis: 100%; }
+  .ident h1 { font-size: 24px; }
+  .sobre-lista { font-size: 14px; }
+  .acoes { width: 100%; }
+  .acoes .periodo { width: 100%; }
+  .acoes .periodo button { flex: 1; padding: 9px; }
+
+  /* 4 números principais: 2x2 enxutos */
+  .kpis { gap: 10px; margin-top: 12px; }
+  .kpi { padding: 14px; min-height: 0; gap: 0; }
+  .kpi .topo-kpi { font-size: 12.5px; line-height: 1.25; min-height: 2.5em; align-items: flex-start; }
+  .kpi .valor { font-size: 26px; margin-top: 6px; }
+  .kpi .nota, .kpi .delta { font-size: 11.5px; line-height: 1.35; }
+
+  /* desempenho: grade 2x2 compacta */
+  .metricas { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .metrica { padding: 14px; }
+  .metrica .rotulo { font-size: 12px; min-height: 2.6em; }
+  .metrica .valor { font-size: 21px; margin: 2px 0 0; }
+
+  /* barras */
+  .hbar { grid-template-columns: 88px 1fr auto; gap: 8px; font-size: 13px; padding: 4px 0; }
+  .hbar .v { min-width: 44px; white-space: nowrap; }
+  .seg span { padding: 0 6px; font-size: 12px; }
+  .legenda { gap: 10px; font-size: 12px; }
+  .grade-2 { gap: 10px; }
+
+  /* conteúdos de destaque e pacotes viram carrosséis de arrastar */
+  .posts.rolavel, .pacotes { display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory;
+    margin: 0 -12px; padding: 4px 12px 12px; scrollbar-width: none; }
+  .posts.rolavel::-webkit-scrollbar, .pacotes::-webkit-scrollbar { display: none; }
+  .posts.rolavel > .post { flex: 0 0 80%; scroll-snap-align: center; }
+  .pacotes { padding-top: 18px; }
+  .pacotes > .pacote { flex: 0 0 84%; scroll-snap-align: center; }
+  .trilho .post { flex-basis: 80%; }
+  .post dl { gap: 8px 6px; margin-top: 10px; padding-top: 10px; }
+  .post dd { font-size: 13px; }
+  .post .sobre .n { font-size: 26px; }
+  .pacote { padding: 20px; }
+  .pacote .ideal { min-height: 0; }
+  .pacote .preco .v { font-size: 34px; }
+  .todos { padding: 18px; gap: 16px; }
+  .dica-arrastar { display: block !important; }
+
+  /* contato */
+  .cta { padding: 22px; gap: 16px; border-radius: 16px; }
+  .cta h2 { font-size: 21px; }
+  .cta .botoes { width: 100%; flex-direction: column; }
+  .cta .botao { justify-content: center; }
 }
+.dica-arrastar { display: none; font-size: 12px; color: var(--apagado); margin: -4px 0 8px; }
 
 /* ---------- PDF (sempre claro) ---------- */
 @media print {
@@ -680,6 +740,7 @@ function secaoPacotes(K, n) {
   const base = Math.max(...K.pacotes.map(p => p.preco_video || 0));
   return `<section id="pacotes" data-menu="Pacotes">
   ${cab(n, 'Pacotes', 'Investimento', esc(K.titulo || ''))}
+  <p class="dica-arrastar">← arraste para comparar os pacotes →</p>
   <div class="pacotes">${K.pacotes.map(p => {
     const eco = base && p.preco_video < base ? Math.round((1 - p.preco_video / base) * 100) : 0;
     return `<div class="cartao pacote${p.destaque ? ' top' : ''}">
@@ -808,7 +869,7 @@ ${D.demo ? '<div class="aviso-demo">DEMONSTRAÇÃO — todos os números desta p
     </figure>
     <figure class="cartao">
       <h3>Principais cidades</h3>
-      ${D.cidades.length ? barrasH(D.cidades.filter(c => !/^outr/i.test(c.rotulo)), pct) : '<p class="vazio">Sem dados.</p>'}
+      ${D.cidades.length ? barrasH(D.cidades.filter(c => !/^outr/i.test(c.rotulo)).map(c => ({ ...c, rotulo: c.rotulo.split(',')[0] })), pct) : '<p class="vazio">Sem dados.</p>'}
       <h3 style="margin-top:26px">Países</h3>
       ${D.paises.length ? barrasH(D.paises.filter(c => !/^outr/i.test(c.rotulo)).map(p => ({ rotulo: PAIS[p.rotulo] || p.rotulo, valor: p.valor })), pct) : '<p class="vazio">Sem dados.</p>'}
     </figure>
@@ -842,7 +903,8 @@ ${(D.portfolio || []).length ? `<section id="portfolio" data-menu="Portfólio">
 
 <section id="destaques" data-menu="Melhores conteúdos">
   ${cab(num(), 'Destaques', 'Conteúdos de maior alcance', `Os posts que mais alcançaram pessoas nos ${ult}.`)}
-  <div class="posts">${V.top.map((c, i) => cardPost(c, false, i + 1)).join('') || '<p class="vazio">Sem posts no período.</p>'}</div>
+  <p class="dica-arrastar">← arraste para ver mais →</p>
+  <div class="posts rolavel">${V.top.map((c, i) => cardPost(c, false, i + 1)).join('') || '<p class="vazio">Sem posts no período.</p>'}</div>
 </section>
 
 <section id="parcerias" data-menu="Parcerias">
@@ -1016,7 +1078,10 @@ function marcarAtivo(forcar) {
   menu.querySelectorAll('a').forEach(a => {
     const on = a.dataset.alvo === atual.id;
     a.classList.toggle('ativo', on);
-    if (on && menu.scrollWidth > menu.clientWidth) menu.scrollTo({ left: a.offsetLeft - 14, behavior: 'smooth' });
+    if (on && menu.scrollWidth > menu.clientWidth) {
+      const alvo = a.getBoundingClientRect().left - menu.getBoundingClientRect().left + menu.scrollLeft - 14;
+      menu.scrollTo({ left: Math.max(0, alvo), behavior: 'smooth' });
+    }
   });
 }
 addEventListener('scroll', () => marcarAtivo(false), { passive: true });
