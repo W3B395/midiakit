@@ -145,8 +145,10 @@ figure h3 { font-size: 14.5px; font-weight: 600; margin: 0 0 14px; }
 .grafico svg { display: block; overflow: visible; }
 .grafico text { fill: var(--apagado); font-size: 11.5px; font-variant-numeric: tabular-nums; }
 .seg { display: flex; gap: 2px; height: 28px; }
-.seg span { border-radius: 4px; color: #fff; font-size: 13px; font-weight: 600; padding: 0 9px;
-  display: flex; align-items: center; overflow: hidden; white-space: nowrap; }
+.seg span { border-radius: 4px; color: #fff; font-size: 13px; font-weight: 600; padding: 0 8px;
+  display: flex; align-items: center; justify-content: center; overflow: hidden; white-space: nowrap;
+  min-width: 48px; }   /* largura mínima: até a fatia pequena (ex.: 3%) mostra o número */
+.seg span:first-child { justify-content: flex-start; }
 .legenda { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 10px; font-size: 13px; color: var(--tinta-2); }
 .legenda i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
 .hbar { display: grid; grid-template-columns: minmax(90px, 150px) 1fr auto; gap: 12px; align-items: center;
@@ -859,7 +861,7 @@ ${D.demo ? '<div class="aviso-demo">DEMONSTRAÇÃO — todos os números desta p
     <figure class="cartao">
       <h3>Gênero</h3>
       ${genero.length ? `<div class="seg">${genero.map(g => `<span data-d="${GENERO[g.rotulo]}: ${pct(g.valor)}"
-        style="flex:${g.valor} 1 0;background:${generoCores[g.rotulo]}">${g.valor >= 0.08 ? pct(g.valor) : ''}</span>`).join('')}</div>
+        style="flex:${g.valor} 1 0;background:${generoCores[g.rotulo]}">${pct(g.valor)}</span>`).join('')}</div>
       <div class="legenda">${genero.map(g => `<span><i style="background:${generoCores[g.rotulo]}"></i>${GENERO[g.rotulo]} ${pct(g.valor)}</span>`).join('')}</div>`
       : '<p class="vazio">Disponível a partir de 100 seguidores.</p>'}
       <h3 style="margin-top:26px">Idade</h3>
