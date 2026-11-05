@@ -127,7 +127,7 @@ section, footer { margin-top: 44px; scroll-margin-top: 24px; }
 .kpi .nota { color: var(--apagado); font-size: 12.5px; }
 .kpi .delta { color: var(--bom); font-size: 12.5px; font-weight: 600; }
 .kpi .spark { margin-top: auto; padding-top: 10px; height: 56px; }
-.metricas { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(210px, 100%), 1fr)); gap: 14px; }
+.metricas { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(210px, 100%), 1fr)); gap: 14px; }
 .metrica { display: flex; gap: 14px; align-items: flex-start; padding: 18px; }
 .metrica .rotulo { color: var(--tinta-2); font-size: 13px; line-height: 1.35; }
 .metrica .valor { font-size: 24px; font-weight: 700; letter-spacing: -.02em; margin: 4px 0 1px; }
@@ -149,12 +149,12 @@ figure h3 { font-size: 14.5px; font-weight: 600; margin: 0 0 14px; }
   display: flex; align-items: center; overflow: hidden; white-space: nowrap; }
 .legenda { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 10px; font-size: 13px; color: var(--tinta-2); }
 .legenda i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
-.hbar { display: grid; grid-template-columns: minmax(90px, 150px) 1fr 54px; gap: 12px; align-items: center;
+.hbar { display: grid; grid-template-columns: minmax(90px, 150px) 1fr auto; gap: 12px; align-items: center;
   font-size: 13.5px; padding: 5px 0; cursor: default; }
 .hbar .r { color: var(--tinta-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .hbar .t { height: 14px; }
 .hbar .b { height: 14px; background: var(--s1); border-radius: 0 4px 4px 0; min-width: 2px; display: block; }
-.hbar .v { font-variant-numeric: tabular-nums; text-align: right; font-weight: 600; }
+.hbar .v { font-variant-numeric: tabular-nums; text-align: right; font-weight: 600; white-space: nowrap; min-width: 54px; }
 .hbar:hover .b { filter: brightness(1.12); }
 details.tabela { margin-top: 14px; font-size: 13px; color: var(--tinta-2); }
 details.tabela summary { cursor: pointer; color: var(--apagado); }
@@ -787,7 +787,6 @@ function montar() {
   const metricas = [
     ['raio', 'Alcance médio por Reel', M.alcance_reel, `média de ${M.qtd_reels} Reels`, null, '', variacao(M.alcance_reel, C.alcance_reel)],
     ['play', 'Visualizações médias por Reel', M.views_reel, `média de ${M.qtd_reels} Reels`, null, '', variacao(M.views_reel, C.views_reel)],
-    ['relogio', 'Tempo médio assistido', M.tempo_reel, 'por visualização de Reel', seg, 'tempo'],
     ['salvar', 'Salvamentos + compartilhamentos', M.salv_comp, 'média por publicação', null, 'salv', variacao(M.salv_comp, C.salv_comp)],
     ['mao', mensal ? 'Contas engajadas / mês' : 'Contas engajadas', T.accounts_engaged, mensal ? 'média mensal' : ult, null, 'engajadas',
       variacao(T.accounts_engaged, C.accounts_engaged)],
