@@ -234,8 +234,9 @@ details.tabela td, details.tabela th { padding: 3px 16px 3px 0; text-align: left
 .pacote .preco .v { font-size: 40px; font-weight: 800; letter-spacing: -.03em; line-height: 1; }
 .pacote .preco .por { color: var(--tinta-2); font-size: 14px; }
 .pacote .economia { display: inline-block; margin-top: 8px; font-size: 12.5px; font-weight: 700; color: var(--bom); }
-.pacote .detalhes { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 18px 0; padding: 14px 0;
-  border-top: 1px solid var(--grade); border-bottom: 1px solid var(--grade); }
+.pacote .detalhes { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: auto 0 0; padding: 16px 0 0;
+  border-top: 1px solid var(--grade); }
+.pacote .economia { margin-bottom: 18px; }
 .pacote .detalhes small { display: block; color: var(--apagado); font-size: 12px; }
 .pacote .detalhes b { font-size: 15px; }
 .pacote .detalhes em { font-style: normal; display: block; font-size: 12px; color: var(--tinta-2); }
@@ -344,6 +345,10 @@ body.apresentando .barra-apres { display: flex; position: fixed; left: 50%; bott
 .barra-apres button:hover { background: rgba(255,255,255,.2); }
 #contador-apres { padding: 0 10px; min-width: 210px; text-align: center; opacity: .9; }
 .barra-apres kbd { font: inherit; font-size: 11px; opacity: .7; border: 1px solid rgba(255,255,255,.3); border-radius: 4px; padding: 0 4px; }
+.post .titulo-post { font-weight: 600; font-size: 14.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--tinta); }
+.post dl.dl-2 { grid-template-columns: 1fr 1fr; }
+.frase-pais { margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--borda); font-size: 15px; color: var(--apagado); }
+.frase-pais b { font-size: 26px; color: var(--tinta); margin-right: 6px; }
 #bt-caneta.ativo { background: #e5383b; }
 #tela-caneta { position: fixed; inset: 0; z-index: 25; display: none; touch-action: none; cursor: crosshair; }
 body.apresentando #tela-caneta { display: block; pointer-events: none; }
@@ -641,7 +646,7 @@ const mPer = HASH.match(/(?:^|-)p(\d+)$/);
 const mPara = HASH.match(/^para-(.+?)(?:-p\d+)?$/);
 const PARA = mPara ? mPara[1].split('-').filter(Boolean).map(w => w[0].toUpperCase() + w.slice(1)).join(' ') : '';
 const PER_PADRAO = PERIODOS.includes('60') ? '60' : PERIODOS[0];   // o painel abre em 60 dias
-let PER = mPer && PERIODOS.includes(mPer[1]) ? mPer[1] : PER_PADRAO;
+let PER = PER_PADRAO;   // painel fixo em 60 dias
 let ABA = 'alcance';
 function gravarEndereco() {
   const partes = [];
@@ -679,7 +684,7 @@ function variacao(atual, anterior, tipo) {
     sobe = d > 0; txt = `${Math.abs(d).toLocaleString('pt-BR', { maximumFractionDigits: 0 })}%`;
   }
   if (!sobe) return '';   // quedas não aparecem: só mostramos crescimento
-  return `<div class="var sobe">▲ ${txt} <span>vs ${N} dias anteriores</span></div>`;
+  return `<div class="var sobe">▲ ${txt} <span>vs período anterior</span></div>`;
 }
 
 function resumoPublico() {
@@ -700,8 +705,7 @@ function resumoPublico() {
 function cardPost(c, publi, pos) {
   const img = c.thumb ? `style="background-image:url('${c.thumb}')"` : '';
   const vazio = c.thumb ? '' : `<span class="sem">${esc(publi ? c.marca : (c.legenda || c.formato))}</span>`;
-  const itens = [['Alcance', c.alcance], ['Curtidas', c.curtidas], ['Comentários', c.comentarios],
-    ['Compart.', c.compart], ['Salvos', c.salvos], ['Engajamento', c.taxa, pct]].filter(i => i[1] != null);
+  const itens = [['Alcance', c.alcance], ['Engajamento', c.taxa, pct]].filter(i => i[1] != null);
   return `<a class="cartao post" href="${esc(c.link || '#')}" target="_blank" rel="noopener">
     <div class="img" ${img}>${vazio}
       <div class="selos"><span class="selo">${esc(c.formato || '')}</span>${pos ? `<span class="selo escuro">#${pos}</span>` : ''}</div>
@@ -709,9 +713,8 @@ function cardPost(c, publi, pos) {
     </div>
     <div class="corpo">
       ${publi ? `<div class="marca">${esc(c.marca)}</div>` : ''}
-      <div class="leg">${esc(publi ? (c.descricao || c.legenda) : c.legenda) || '&nbsp;'}</div>
-      ${itens.length ? `<dl>${itens.map(i => `<div><dt>${i[0]}</dt><dd>${(i[2] || fmt)(i[1])}</dd></div>`).join('')}</dl>` : ''}
-      <div class="data">${dataLonga(c.data)}</div>
+      <div class="titulo-post">${esc(String((publi ? (c.descricao || c.legenda) : c.legenda) || '').split(String.fromCharCode(10))[0]) || '&nbsp;'}</div>
+      ${itens.length ? `<dl class="dl-2">${itens.map(i => `<div><dt>${i[0]}</dt><dd>${(i[2] || fmt)(i[1])}</dd></div>`).join('')}</dl>` : ''}
     </div></a>`;
 }
 
@@ -773,7 +776,6 @@ function secaoPacotes(K, n) {
         <div><small>Total do pacote</small><b>R$ ${reais(p.preco_total)}</b></div>
         <div><small>Duração</small><b>${esc(p.duracao || '')}</b>${p.ritmo ? `<em>${esc(p.ritmo)}</em>` : ''}</div>
       </div>
-      <ul class="lista-ok">${(p.inclui || []).map(i => `<li>${ic('ok')}<span>${esc(i)}</span></li>`).join('')}</ul>
     </div>`;
   }).join('')}</div>
   ${(K.todos_incluem || []).length ? `<div class="cartao todos">
@@ -844,7 +846,7 @@ ${D.demo ? '<div class="aviso-demo">DEMONSTRAÇÃO — todos os números desta p
       ${(P.tags || []).length ? `<div class="tags">${P.tags.map(t => `<span>${esc(t)}</span>`).join('')}</div>` : ''}`}
       <p class="so-impressao">Números dos ${ult}.</p>
     </div>
-    <div class="acoes">${seletor()}
+    <div class="acoes">
       <button class="botao contorno-escuro" onclick="apresentar(true)">${ic('tela')} Apresentar</button>
       ${window.self !== window.top ? '' : `<button class="botao" onclick="window.print()">${ic('baixar')} Salvar PDF</button>`}
     </div>
@@ -857,7 +859,6 @@ ${D.demo ? '<div class="aviso-demo">DEMONSTRAÇÃO — todos os números desta p
     <div class="valor">${k.val}</div>
     ${k.nota ? `<div class="${k.delta ? 'delta' : 'nota'}">${k.nota}</div>` : ''}
     ${k.varia || ''}
-    ${k.spark ? `<div class="spark" data-spark="${k.spark}"></div>` : ''}
   </div>`).join('')}
 </div>
 </div>
@@ -887,9 +888,8 @@ ${D.demo ? '<div class="aviso-demo">DEMONSTRAÇÃO — todos os números desta p
     </figure>
     <figure class="cartao">
       <h3>Principais cidades</h3>
-      ${D.cidades.length ? barrasH(D.cidades.filter(c => !/^outr/i.test(c.rotulo)).map(c => ({ ...c, rotulo: c.rotulo.split(',')[0] })), pct) : '<p class="vazio">Sem dados.</p>'}
-      <h3 style="margin-top:26px">Países</h3>
-      ${D.paises.length ? barrasH(D.paises.filter(c => !/^outr/i.test(c.rotulo)).map(p => ({ rotulo: PAIS[p.rotulo] || p.rotulo, valor: p.valor })), pct) : '<p class="vazio">Sem dados.</p>'}
+      ${D.cidades.length ? barrasH(D.cidades.filter(c => !/^outr/i.test(c.rotulo)).slice(0, 5).map(c => ({ ...c, rotulo: c.rotulo.split(',')[0] })), pct) : '<p class="vazio">Sem dados.</p>'}
+      ${D.paises.length ? `<div class="frase-pais"><b>${pct(D.paises[0].valor)}</b> no ${esc(D.paises[0].rotulo === 'BR' ? 'Brasil' : (PAIS[D.paises[0].rotulo] || D.paises[0].rotulo))}</div>` : ''}
     </figure>
   </div>
 </section>
@@ -967,7 +967,6 @@ ${D.pacotes ? secaoPacotes(D.pacotes, num()) : ''}
   secoes = [...document.querySelectorAll('[data-menu]')];
   menu.innerHTML = `<div class="marca-menu">${P.foto ? `<img src="${P.foto}" alt="">` : `<div class="mini">${inicial}</div>`}
       <div><b>${esc(P.nome || P.usuario)}</b><span>@${esc(P.usuario)}</span></div></div>
-    <div class="rotulo-menu">Período</div><div class="periodo-menu">${seletor()}</div>
     <div class="rotulo-menu">Seções</div>` +
     secoes.map(s => `<a href="#${s.id}" data-alvo="${s.id}">${ic(MENU_IC[s.id] || 'visao')}<span>${s.dataset.menu}</span></a>`).join('') +
     `<button class="apres-menu" onclick="apresentar(true)">${ic('tela')} Modo apresentação</button>` +
