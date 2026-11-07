@@ -1026,7 +1026,7 @@ function mostrarSlide(i) {
 }
 function irSlide(d) { mostrarSlide(SLIDE + d); }
 
-// caneta vermelha: cada traço some 4 s depois de terminado
+// caneta vermelha: cada traço some 3 s depois de terminado
 const TRACOS = [];
 let TRACO = null, CANVAS = null, CTX = null, ANIM = 0;
 function telaCaneta() {
@@ -1065,8 +1065,8 @@ function pintarCaneta() {
   for (let i = TRACOS.length - 1; i >= 0; i--) {
     const t = TRACOS[i];
     const passou = t.fim ? agora - t.fim : 0;
-    if (passou > 4600) { TRACOS.splice(i, 1); continue; }
-    CTX.globalAlpha = passou > 4000 ? 1 - (passou - 4000) / 600 : 1;
+    if (passou > 3600) { TRACOS.splice(i, 1); continue; }
+    CTX.globalAlpha = passou > 3000 ? 1 - (passou - 3000) / 600 : 1;
     CTX.strokeStyle = '#ff2d2d'; CTX.lineWidth = 5; CTX.lineCap = 'round'; CTX.lineJoin = 'round';
     CTX.shadowColor = 'rgba(255,45,45,.55)'; CTX.shadowBlur = 6;
     CTX.beginPath();
